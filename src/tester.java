@@ -13,10 +13,10 @@ public class tester {
     {
         StringBuilder sb = new StringBuilder();
 
+        //magnitude of the rows that will be generated
+        int count  = random_int(100, 1000);
 
-        int count  = random_int(100, 100000);
 
-        System.out.println(count);
 
         StringBuilder[] arr  =new StringBuilder[count];
 
@@ -34,25 +34,45 @@ public class tester {
     public static StringBuilder generate(){
         StringBuilder result= new StringBuilder();
 
-        int services, variations, questions, categories, sub_cat, percent, scoreMin, scoreMax ;
+        int services, variations, questions, categories, sub_cat, percent, timeMin, timeMax ;
         float percentGeneration;
+        char firstMainChar, secondMainChar, fResptype, sResptype;
+        String fdateRespC, sdateRespC, fStartSearchDate, sStartSearchDate, fEndSearchDate , sEndSearchDate;
 
+
+        //Common, frequently used and customizable options for quick code adaptation
         services = 10;
         variations = 3;
         questions = 10;
         categories = 20;
         sub_cat = 5;
-        percent = 80;
-        percentGeneration = 0.5f;
-        scoreMin = 30;
-        scoreMax = 70;
+        percent = 80; // percent of  'C-data' type for this method
+        percentGeneration = 0.5f; //the central value from which the other percentages oscillate
 
+        // range time in minutes for waiting time.
+        timeMin = 30;
+        timeMax = 200;
 
+        // C (waiting time line) or D (query)
+        firstMainChar = 'C';
+        secondMainChar = 'D';
 
+        //Response type ‘P’ (first answer) or ‘N’ (next answer).
+        fResptype = 'P';
+        sResptype = 'N';
+        //Generate random date for 'C-type' data
+        fdateRespC = "01.03.2012";
+        sdateRespC = "01.10.2019";
 
-        char type = randomr('C', 'D', percent);
-        // if file generate input date starting with C
-        if(type == 'C' ){
+        //Generate random date or date range for 'C-type' data
+        fStartSearchDate = "01.03.2012";
+        sStartSearchDate = "01.10.2019";
+        fEndSearchDate = "01.03.2017";
+        sEndSearchDate = "01.10.2019";
+
+        char type = randomr(firstMainChar, secondMainChar, percent);
+        // C (waiting time line)
+        if(type == firstMainChar ){
 
             result = result.append(type + " " + random_int(1, services));
 
@@ -72,16 +92,16 @@ public class tester {
                     result = result.append( "." + random_int(1, sub_cat));
                 }
             }
-            result = result.append( " " + randomr('P','N',  percent));
+            result = result.append( " " + randomr(fResptype,sResptype,  percent));
            try {
 
-               result = result.append(" " +  randomDate("01.03.2012", "01.10.2019"));
+               result = result.append(" " +  randomDate(fdateRespC, sdateRespC));
            }
             catch (ParseException ex){ex.printStackTrace();}
-            result = result.append( " " + random_int(scoreMin, scoreMax));
+            result = result.append( " " + random_int(timeMin, timeMax));
         }
-
-        if(type == 'D' ){
+        //  D (query)
+        if(type == secondMainChar ){
 
             result = result.append(type + " " + random_int(1, services));
 
@@ -104,11 +124,11 @@ public class tester {
                     result = result.append( "." + random_int(1, sub_cat));
                 }
             }
-            result = result.append( " " + randomr('P','N',  percent));
+            result = result.append( " " + randomr(fResptype,sResptype,  percent));
             try {
                 if(Math.random()>=percentGeneration-0.1)
-                result = result.append(" " +  randomDate("01.03.2012", "01.03.2017") + "-"+ randomDate("01.03.2017", "01.10.2019"));
-               else  result = result.append(" " +  randomDate("01.03.2012", "01.10.2019"));
+                result = result.append(" " +  randomDate(fStartSearchDate , sStartSearchDate) + "-"+ randomDate(fEndSearchDate,sEndSearchDate ));
+               else  result = result.append(" " +  randomDate(fStartSearchDate, sStartSearchDate));
             }
             catch (ParseException ex){ex.printStackTrace();}
 
@@ -116,15 +136,19 @@ public class tester {
         return result;
     }
 
+
+    //Generates a value within the specified parameters
     private static int random_int(int Min, int Max){
         return (int) (Math.random()*(Max+1-Min))+Min;
     }
 
+      //Allows you to get one of two input char with the ability to specify the percentage of generation
     private static char randomr(char first, char second, int percent){
         if(Math.random()<= (float) percent/100) return first;
         else return second;
     }
 
+    // generates a random date between two string values with standard pattern DD.MM.YYYY
     private static String randomDate(String startDate, String endDate) throws ParseException {
         SimpleDateFormat date = new SimpleDateFormat("dd.MM.yyyy");
     Date d0 = date.parse(startDate);
@@ -137,6 +161,7 @@ public class tester {
 
     }
 
+            // Method for save data only in txt file
 
     public static void saveFile(StringBuilder arr) {
 
